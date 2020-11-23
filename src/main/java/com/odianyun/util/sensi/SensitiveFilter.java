@@ -1,11 +1,6 @@
 package com.odianyun.util.sensi;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
+import java.io.*;
 import java.util.NavigableSet;
 
 /**
@@ -24,11 +19,17 @@ public class SensitiveFilter implements Serializable{
 	/**
 	 * 默认的单例，使用自带的敏感词库
 	 */
-	public static final SensitiveFilter DEFAULT = new SensitiveFilter(
-			new BufferedReader(new InputStreamReader(
-					ClassLoader.getSystemResourceAsStream("sensi_words.txt")
-					, StandardCharsets.UTF_8)));
-	
+	public static SensitiveFilter DEFAULT;
+
+	public static SensitiveFilter init(String filePath){
+		try {
+			DEFAULT = new SensitiveFilter(new BufferedReader(new FileReader(filePath)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return DEFAULT;
+	}
+
 	/**
 	 * 为2的n次方，考虑到敏感词大概在10k左右，
 	 * 这个数量应为词数的数倍，使得桶很稀疏
